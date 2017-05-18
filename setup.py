@@ -8,7 +8,6 @@ setup(
     version=etlite.VERSION,
     description='Extract/Transform Light - a simple library for reading delimited files.',
     author='Sergiy Kuzmenko',
-    author_email='sergiy@kuzmenko.org',
     url='https://github.com/shelldweller/etlite',
     packages=['etlite'],
     license="Public Domain",

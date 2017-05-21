@@ -2,25 +2,34 @@ import csv
 from warnings import warn
 
 def delim_reader(input, transformations, *args, **kwargs):
+    rules = _load_rules(transformations)
+    reader = csv.DictReader(input, *args, **kwargs)
+
+    for row in reader:
+        yield _transform_dict(row, rules)
+
+
+def _load_rules(transformations):
     rules = []
     for rule in transformations:
         if "to" in rule:
             rules.append(rule)
         else:
             warn("Missing 'to' field in rule %s" % rule)
+    return rules
 
-    reader = csv.DictReader(input, *args, **kwargs)
 
-    for input_row in reader:
-        row = {}
-        for rule in rules:
-            via = rule.get("via", lambda x:x)
-            if "from" in rule:
-                value = via(input_row[rule["from"]])
-            else:
-                value = via(row)
-            _update_dict(row, rule["to"], value)
-        yield row
+def _transform_dict(input_row, rules):
+    row = {}
+    for rule in rules:
+        via = rule.get("via", lambda x:x)
+        if "from" in rule:
+            value = via(input_row[rule["from"]])
+        else:
+            value = via(row)
+        _update_dict(row, rule["to"], value)
+    return row
+
 
 def _update_dict(dictionary, key, value):
     keys = key.split('.')

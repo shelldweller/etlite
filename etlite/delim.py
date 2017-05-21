@@ -1,12 +1,18 @@
 import csv
 from warnings import warn
+from .exceptions import TransformationError
 
 def delim_reader(input, transformations, *args, **kwargs):
     rules = _load_rules(transformations)
     reader = csv.DictReader(input, *args, **kwargs)
+    row_num = 1
 
     for row in reader:
-        yield _transform_dict(row, rules)
+        row_num += 1
+        try:
+            yield _transform_dict(row, rules)
+        except Exception as err:
+            raise TransformationError("%s: %s, in line %d" % (err.__class__.__name__, err, row_num))
 
 
 def _load_rules(transformations):

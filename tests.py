@@ -8,7 +8,7 @@ except ImportError:
     # python 3
     from io import StringIO
 
-from etlite import delim_reader
+from etlite import delim_reader, TransformationError
 
 class TestTransformations(unittest.TestCase):
     def setUp(self):
@@ -84,6 +84,15 @@ class TestTransformations(unittest.TestCase):
         reader = delim_reader(tabfile, self.transformations, delimiter="\t")
         actual = [row for row in reader]
         self.assertListEqual(actual, self.expected)
+
+
+class TestException(unittest.TestCase):
+    def test_transformation_exception(self):
+        rules = [ {"from": "num", "to": "num", "via": int} ]
+        stream = StringIO("num\none")
+        with self.assertRaises(TransformationError) as err:
+            list(delim_reader(stream, rules))
+        self.assertEqual(err.exception.args[0], "ValueError: invalid literal for int() with base 10: 'one', in line 2")
 
 
 if __name__ == '__main__':

@@ -12,7 +12,10 @@ def delim_reader(input, transformations, *args, **kwargs):
         try:
             yield _transform_dict(row, rules)
         except Exception as err:
-            raise TransformationError("%s: %s, in line %d" % (err.__class__.__name__, err, row_num))
+            raise TransformationError(
+                "%s: %s, in line %d" % (err.__class__.__name__, err, row_num),
+                record=row
+                )
 
 
 def _load_rules(transformations):

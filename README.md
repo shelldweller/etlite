@@ -84,3 +84,28 @@ ETlite is just a thin wrapper on top of Python built-in [CSV module](https://doc
 ```python
 reader = delim_reader(csvfile, transformations, delimiter="\t")
 ```
+
+## Exception handling
+
+If desired transtormation cannot be performed, ETLite will raise `TransformationError`. If you do not want to abort data loading, you can recover from this error as follows:
+
+```python
+from etlite import delim_reader, TransformationError
+
+transformations = [
+    # ...
+]
+
+with open('my-data.csv') as stream:
+    reader = delim_reader(stream, transformations)
+    while True:
+        try:
+            row = next(reader)
+        except StopIteration:
+            break
+        except TransformationError as err:
+            print(err)
+            print(err.record)
+        else:
+            do_something(row)
+```

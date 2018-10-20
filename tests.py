@@ -93,6 +93,7 @@ class TestException(unittest.TestCase):
         with self.assertRaises(TransformationError) as err:
             list(delim_reader(stream, rules))
         self.assertEqual(err.exception.args[0], "ValueError: invalid literal for int() with base 10: 'one', in line 2")
+        self.assertEqual(err.exception.record, {"num": "one"})
 
 
 if __name__ == '__main__':

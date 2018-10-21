@@ -1,3 +1,5 @@
+[![Build Status](https://semaphoreci.com/api/v1/shelldweller-39/etlite/branches/master/badge.svg)](https://semaphoreci.com/shelldweller-39/etlite)
+
 # ETlite
 
 Extract/Transform Light - a simple library for reading delimited files.

@@ -87,19 +87,12 @@ reader = delim_reader(csvfile, transformations, delimiter="\t")
 
 ## Exception handling
 
-<<<<<<< HEAD
-If desired transtormation cannot be performed, ETLite will raise `TransformationError`. If you do not want to abort data loading, you can recover from this error as follows:
-
-```python
-from etlite import delim_reader, TransformationError
-=======
 If desired transtormation cannot be performed, ETLite will raise `TransformationError`. If you do not want to abort data loading, you can pass an error handler to `delim_reader`.
 
 Error handler must be a function. It will be passed an instance of `TransformationError`. *Note: `on_error` must be pased as keywod argument.*
 
 ```python
 from etlite import delim_reader
->>>>>>> better-errors
 
 transformations = [
     # ...

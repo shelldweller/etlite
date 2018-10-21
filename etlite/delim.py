@@ -3,6 +3,7 @@ from warnings import warn
 from .exceptions import TransformationError
 
 def delim_reader(input, transformations, *args, **kwargs):
+    on_error = kwargs.pop('on_error', None)
     rules = _load_rules(transformations)
     reader = csv.DictReader(input, *args, **kwargs)
     row_num = 1
@@ -12,10 +13,14 @@ def delim_reader(input, transformations, *args, **kwargs):
         try:
             yield _transform_dict(row, rules)
         except Exception as err:
-            raise TransformationError(
+            new_error = TransformationError(
                 "%s: %s, in line %d" % (err.__class__.__name__, err, row_num),
                 record=row
-                )
+            )
+            if on_error:
+                on_error(new_error)
+            else:
+                raise new_error
 
 
 def _load_rules(transformations):

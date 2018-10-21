@@ -87,13 +87,29 @@ class TestTransformations(unittest.TestCase):
 
 
 class TestException(unittest.TestCase):
-    def test_transformation_exception(self):
+    def setUp(self):
+        self.saw_error = False
+
+    def test_unhandled_transformation_exception(self):
         rules = [ {"from": "num", "to": "num", "via": int} ]
         stream = StringIO("num\none")
         with self.assertRaises(TransformationError) as err:
             list(delim_reader(stream, rules))
         self.assertEqual(err.exception.args[0], "ValueError: invalid literal for int() with base 10: 'one', in line 2")
         self.assertEqual(err.exception.record, {"num": "one"})
+
+    def test_handled_trnsformation_exception(self):
+        rules = [{"from": "num", "to": "num", "via": int}]
+        stream = StringIO("num\none\n1")
+
+        def error_handler(e):
+            self.saw_error = True
+
+        reader = delim_reader(stream, rules, on_error=error_handler)
+        result = [row for row in reader]
+
+        self.assertTrue(self.saw_error)
+        self.assertEqual(result, [{'num': 1}])
 
 
 if __name__ == '__main__':
